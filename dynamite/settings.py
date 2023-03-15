@@ -11,21 +11,26 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os, psycopg2
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+#BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static') 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'public', 'media') 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xm)-dr2dm+3esh4tgw+xyqf$y@srv8)!a8r6h3@r1_ubztz#i0'
-
+with open('/home/ryslek/secret_key.txt') as f:
+    SECRET_KEY = f.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dynamites.ct8.pl', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -74,10 +79,17 @@ WSGI_APPLICATION = 'dynamite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+with open('/home/ryslek/database.txt') as f:
+    DATABASE_VALUES= f.read().splitlines()
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DATABASE_VALUES[0],
+        "USER": DATABASE_VALUES[1],
+        "PASSWORD": DATABASE_VALUES[2],
+        "HOST": DATABASE_VALUES[3],
+        "PORT": int(DATABASE_VALUES[4]),
     }
 }
 
@@ -111,12 +123,6 @@ TIME_ZONE = 'CET'
 USE_I18N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
